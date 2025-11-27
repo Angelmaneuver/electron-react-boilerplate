@@ -9,9 +9,11 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
-import { autoUpdater } from 'electron-updater';
+
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log from 'electron-log';
+import { autoUpdater } from 'electron-updater';
+
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
@@ -41,15 +43,20 @@ const isDebug =
 
 if (isDebug) {
   require('electron-debug').default();
-  let port = '9223';
+
   if (process.env.MAIN_ARGS) {
-    port = (
-      [...process.env.MAIN_ARGS.matchAll(/"[^"]+"|[^\s"]+/g)]
-        .flat()
-        .filter((str) => str.includes('debugging-port'))[0] || '=9223'
-    ).split('=')[1];
+    const parameters = [
+      ...process.env.MAIN_ARGS.matchAll(/"[^"]+"|[^\s"]+/g),
+    ].flat();
+
+    if (parameters.find((str) => str.includes('debugging-port'))) {
+      const port = parameters
+        .filter((str) => str.includes('debugging-port'))[0]
+        .split('=')[1];
+
+      app.commandLine.appendSwitch('remote-debugging-port', port);
+    }
   }
-  app.commandLine.appendSwitch('remote-debugging-port', port);
 }
 
 const installExtensions = async () => {
