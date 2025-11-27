@@ -1,6 +1,6 @@
 module.exports = {
   extends: 'erb',
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'import'],
   rules: {
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
@@ -13,6 +13,21 @@ module.exports = {
     '@typescript-eslint/no-shadow': 'error',
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
+    'import/order': [
+      'error',
+      {
+        groups: [
+          'builtin',
+          'external',
+          'internal',
+          ['parent', 'sibling', 'index'],
+          'object',
+          'type',
+        ],
+        'newlines-between': 'always',
+        alphabetize: { order: 'asc', caseInsensitive: true },
+      },
+    ],
   },
   parserOptions: {
     ecmaVersion: 2022,
